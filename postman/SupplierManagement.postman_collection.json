@@ -1,0 +1,132 @@
+{
+  "info": {
+    "name": "Supplier Management — BrightCore",
+    "description": "REST collection covering all 5 endpoints of the Supplier Management module. Uses HTTP Basic auth (admin / admin123 by default). Set `baseUrl` in collection variables.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "basic",
+    "basic": [
+      { "key": "username", "value": "{{username}}", "type": "string" },
+      { "key": "password", "value": "{{password}}", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl",  "value": "http://localhost:8080" },
+    { "key": "username", "value": "admin" },
+    { "key": "password", "value": "admin123" },
+    { "key": "supplierId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "1. Add Supplier (POST)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 201', () => pm.response.to.have.status(201));",
+              "const json = pm.response.json();",
+              "pm.test('Has data.id', () => pm.expect(json.data.id).to.be.a('number'));",
+              "pm.collectionVariables.set('supplierId', json.data.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/v1/suppliers/add",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Acme Textiles\",\n  \"email\": \"contact@acme.example\",\n  \"phoneNumber\": \"+91 9876543210\",\n  \"companyName\": \"Acme Pvt Ltd\",\n  \"address\": \"Mumbai\",\n  \"country\": \"India\"\n}"
+        }
+      }
+    },
+    {
+      "name": "2. Get Supplier by id (GET)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+              "pm.test('id matches', () => pm.expect(pm.response.json().data.id).to.eql(parseInt(pm.collectionVariables.get('supplierId'))));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/suppliers/{{supplierId}}"
+      }
+    },
+    {
+      "name": "3. Update Supplier (PUT)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": ["pm.test('Status is 200', () => pm.response.to.have.status(200));"]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/v1/suppliers/update/{{supplierId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Acme Textiles Renamed\",\n  \"email\": \"contact@acme.example\",\n  \"phoneNumber\": \"+91 9000000000\",\n  \"companyName\": \"Acme Pvt Ltd\",\n  \"address\": \"Pune\",\n  \"country\": \"India\",\n  \"active\": true\n}"
+        }
+      }
+    },
+    {
+      "name": "4. List Suppliers (GET, paginated)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/suppliers?page=0&size=20&sort=id,asc",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "suppliers"],
+          "query": [
+            { "key": "page", "value": "0" },
+            { "key": "size", "value": "20" },
+            { "key": "sort", "value": "id,asc" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "5. Delete Supplier (DELETE)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": ["pm.test('Status is 204', () => pm.response.to.have.status(204));"]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/api/v1/suppliers/delete/{{supplierId}}"
+      }
+    },
+    {
+      "name": "Validation Error (POST)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/v1/suppliers/add",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"\",\n  \"email\": \"not-an-email\"\n}"
+        }
+      }
+    }
+  ]
+}
