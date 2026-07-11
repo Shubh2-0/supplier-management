@@ -261,3 +261,8 @@ supplier-management/
 - **Pagination via Spring Data `Pageable`** — `?page=&size=&sort=field,direction`, response wrapped in a stable `PageResponse<T>` envelope.
 - **Multi-stage Docker build** — final image is JRE-only on Alpine, runs as a non-root user, includes a liveness `HEALTHCHECK`.
 - **CI on every push** — GitHub Actions runs `mvnw verify` and a Docker smoke build.
+
+---
+
+## 👤 Author
+*   **Shubham Bhati** (Java Backend Engineer) - [LinkedIn](https://www.linkedin.com/in/bhatishubham) | [Portfolio](https://shubhambhati.is-a.dev)
